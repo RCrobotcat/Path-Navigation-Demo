@@ -1,3 +1,3 @@
 # Path-Navigation-Demo
 Path-Navigation-Demo for learning.  
-**Contains DFS, Dijkstra, AStar and Greedy Path Finding Algorithms.**
+**Contains BFS, Dijkstra, AStar and Greedy Path Finding Algorithms.**
