@@ -54,14 +54,24 @@ namespace NaviPath
 
         readonly Vector2[] allDirs = { 
             // Clockwise
-            new Vector2(-1,1),
+            /*new Vector2(-1,1),
             new Vector2(0,1),
             new Vector2(1,1),
             new Vector2(1,0),
             new Vector2(1,-1),
             new Vector2(0,-1),
             new Vector2(-1,-1),
-            new Vector2(-1,0)
+            new Vector2(-1,0)*/
+
+            //上 下 左 右 左上 右上 左下 右下
+            new Vector2(0,1),
+            new Vector2(0,-1),
+            new Vector2(-1,0),
+            new Vector2(1,0),
+            new Vector2(-1,1),
+            new Vector2(1,1),
+            new Vector2(-1,-1),
+            new Vector2(1,-1)
         };
         /// <summary>
         /// 获取邻居(上下左右八个方向邻居)列表

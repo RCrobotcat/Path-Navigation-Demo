@@ -53,7 +53,7 @@ public class PathFindingRoot : MonoBehaviour
 
                 // Ѱ·
                 blockMap.UpdateMapData();
-                BasePathFinder basePathFinder = new BasePathFinder();
+                BFSFinder basePathFinder = new BFSFinder();
                 // List<BlockLogic> pathList = blockMap.CalculatePath(m_startBlock, m_endBlock, basePathFinder);
 
                 float startTime = Time.realtimeSinceStartup;

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 // 寻路计算器的基类
 namespace NaviPath
 {
-    public class BasePathFinder
+    public abstract class BasePathFinder
     {
         protected BlockLogic m_startBlock;
         protected BlockLogic m_endBlock;
@@ -54,22 +54,7 @@ namespace NaviPath
             return m_pathList;
         }
 
-        protected void DetectNeighborBlocks(BlockLogic detectBlock, BlockLogic neighborBlock)
-        {
-            if (!m_finishedList.Contains(neighborBlock) && !m_detectQueue.Contains(neighborBlock))
-            {
-                // 正在检测区块，显示为检测中
-                neighborBlock.OnViewChange(ViewState.Checking);
-                float neighborDistance = BlockLogic.GetLogicBlockDistance(detectBlock, neighborBlock);
-                neighborBlock.sumDistance = detectBlock.sumDistance + neighborDistance;
-
-                neighborBlock.preBlock = detectBlock;
-                m_detectQueue.Enqueue(neighborBlock);
-
-                // 检测完后显示方向指向信息
-                neighborBlock.OnViewChange(ViewState.DirctionDebug);
-            }
-        }
+        protected abstract void DetectNeighborBlocks(BlockLogic detectBlock, BlockLogic neighborBlock);
 
         protected List<BlockLogic> GetPathList()
         {
