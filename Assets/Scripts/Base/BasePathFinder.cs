@@ -9,7 +9,7 @@ namespace NaviPath
         protected BlockLogic m_startBlock;
         protected BlockLogic m_endBlock;
 
-        protected Queue<BlockLogic> m_detectQueue = new Queue<BlockLogic>(); // 等待检测的队列
+        protected PriorityQueue<BlockLogic> m_detectQueue = new PriorityQueue<BlockLogic>(); // 等待检测的队列
         protected List<BlockLogic> m_finishedList = new List<BlockLogic>(); // 已经检测过的列表
         protected List<BlockLogic> m_pathList = new List<BlockLogic>(); // 路径最终区块列表
 

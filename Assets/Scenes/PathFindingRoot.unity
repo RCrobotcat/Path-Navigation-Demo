@@ -568,10 +568,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aad1949c62288264894a65b996079d2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pathFinderMode: 1
   xCount: 20
   yCount: 10
   blockObject: {fileID: 4199138389998460170, guid: 0ce18e3803819a244928b9b0266b11a9, type: 3}
   blockRoot: {fileID: 1203110511}
+  searchDelay: 5
+  operation: 0
 --- !u!1 &1703675785
 GameObject:
   m_ObjectHideFlags: 0

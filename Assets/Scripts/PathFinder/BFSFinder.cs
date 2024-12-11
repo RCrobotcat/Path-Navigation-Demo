@@ -12,6 +12,7 @@ namespace NaviPath
                 float neighborDistance = BlockLogic.GetLogicBlockDistance(detectBlock, neighborBlock);
                 neighborBlock.sumDistance = detectBlock.sumDistance + neighborDistance;
 
+                neighborBlock.priority = m_finishedList.Count;
                 neighborBlock.preBlock = detectBlock;
                 m_detectQueue.Enqueue(neighborBlock);
 

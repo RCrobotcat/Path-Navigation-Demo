@@ -10,9 +10,18 @@ public enum OperationEnum
     ShowResult // 显示结果阶段
 }
 
+public enum PathFinderMode
+{
+    BFS,
+    Dijkstra,
+    AStar
+}
+
 public class PathFindingRoot : MonoBehaviour
 {
     public static PathFindingRoot Instance; // Singleton
+
+    public PathFinderMode pathFinderMode = PathFinderMode.BFS;
 
     public int xCount;
     public int yCount;
@@ -53,7 +62,22 @@ public class PathFindingRoot : MonoBehaviour
 
                 // 寻路
                 blockMap.UpdateMapData();
-                BFSFinder basePathFinder = new BFSFinder();
+                BasePathFinder basePathFinder = null;
+                switch (pathFinderMode)
+                {
+                    case PathFinderMode.BFS:
+                        basePathFinder = new BFSFinder();
+                        break;
+                    case PathFinderMode.Dijkstra:
+                        basePathFinder = new DijkstraFinder();
+                        break;
+                    case PathFinderMode.AStar:
+                        // basePathFinder = new AStarFinder();
+                        basePathFinder = new BFSFinder();
+                        break;
+                    default:
+                        break;
+                }
                 // List<BlockLogic> pathList = blockMap.CalculatePath(m_startBlock, m_endBlock, basePathFinder);
 
                 float startTime = Time.realtimeSinceStartup;

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 // 单个逻辑区块
 namespace NaviPath
 {
-    public class BlockLogic
+    public class BlockLogic : IComparable<BlockLogic>
     {
         int m_xIndex;
         int m_yIndex;
@@ -22,6 +22,8 @@ namespace NaviPath
         public List<BlockLogic> neighborsList; // 相邻区块列表
         public BlockLogic preBlock; // 记录当前区块的前一个区块
         public float sumDistance = float.PositiveInfinity; // 记录起点到当前点的总距离, 默认无穷大
+
+        public float priority; // 优先级
 
         public void InitBlockLogic(int x, int y)
         {
@@ -69,6 +71,19 @@ namespace NaviPath
         public override string ToString()
         {
             return $"[{XIndex}, {YIndex}]";
+        }
+
+        public int CompareTo(BlockLogic otherBlock)
+        {
+            if (priority < otherBlock.priority)
+            {
+                return -1;
+            }
+            else if (priority > otherBlock.priority)
+            {
+                return 1;
+            }
+            else return 0;
         }
     }
 }
