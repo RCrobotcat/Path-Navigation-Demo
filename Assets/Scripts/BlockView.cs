@@ -83,6 +83,11 @@ namespace NaviPath
             };
         }
 
+        public void UnInitBlockView()
+        {
+            SetViewInfo(ViewState.Walk);
+        }
+
         void SetViewInfo(ViewState state)
         {
             switch (state)

@@ -30,6 +30,17 @@ namespace NaviPath
             }
         }
 
+        public void UnInitMap()
+        {
+            for (int i = 0; i < m_xCount; i++)
+            {
+                for (int j = 0; j < m_yCount; j++)
+                {
+                    m_blockArr[i, j].UnInitBlockLogic();
+                }
+            }
+        }
+
         public void UpdateMapData()
         {
             for (int i = 0; i < m_xCount; i++)
@@ -50,6 +61,33 @@ namespace NaviPath
         public Task<List<BlockLogic>> CalculatePath(BlockLogic start, BlockLogic end, BasePathFinder pathFinder)
         {
             return pathFinder.CalculatePath(start, end);
+        }
+
+        bool[,] stateArr;
+        public void SaveWalkableState()
+        {
+            stateArr = new bool[m_xCount, m_yCount];
+            for (int i = 0; i < m_xCount; i++)
+            {
+                for (int j = 0; j < m_yCount; j++)
+                {
+                    stateArr[i, j] = m_blockArr[i, j].Walkable;
+                }
+            }
+        }
+        public void LoadWalkableState()
+        {
+            if (stateArr != null)
+            {
+                for (int i = 0; i < m_xCount; i++)
+                {
+                    for (int j = 0; j < m_yCount; j++)
+                    {
+                        m_blockArr[i, j].SetWalkableState(stateArr[i, j]);
+                    }
+                }
+            }
+            stateArr = null;
         }
 
         readonly Vector2[] allDirs = { 

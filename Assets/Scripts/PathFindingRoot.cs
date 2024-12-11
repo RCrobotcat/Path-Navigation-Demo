@@ -44,6 +44,47 @@ public class PathFindingRoot : MonoBehaviour
         blockMap.InitMap(xCount, yCount);
     }
 
+    void Update()
+    {
+        // 重置地图: 直接重新开始寻路
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            if (operation == OperationEnum.ShowResult)
+            {
+                blockMap.SaveWalkableState();
+                blockMap.UnInitMap();
+                operation = OperationEnum.Prepare;
+
+                blockMap.LoadWalkableState();
+
+                BlockLogic tempEnd = m_endBlock;
+                OnClickBlockItem(m_startBlock);
+                OnClickBlockItem(tempEnd);
+            }
+        }
+
+        // 重置地图: 在原地形基础上设置地形以及重新设置起点终点
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            if (operation == OperationEnum.ShowResult)
+            {
+                blockMap.SaveWalkableState();
+                blockMap.UnInitMap();
+                operation = OperationEnum.Prepare;
+
+                blockMap.LoadWalkableState();
+            }
+        }
+
+        // 完全重置地图
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            blockMap.SaveWalkableState();
+            blockMap.UnInitMap();
+            operation = OperationEnum.Prepare;
+        }
+    }
+
     public async void OnClickBlockItem(BlockLogic block)
     {
         switch (operation)
@@ -57,7 +98,7 @@ public class PathFindingRoot : MonoBehaviour
             case OperationEnum.SetPoint:
                 operation = OperationEnum.Searching;
                 m_endBlock = block;
-                Debug.Log($"starting point: {m_startBlock}, ending point: {m_endBlock}");
+                // Debug.Log($"starting point: {m_startBlock}, ending point: {m_endBlock}");
                 m_endBlock.OnViewChange(ViewState.EndingPoint);
 
                 // 寻路
@@ -90,7 +131,7 @@ public class PathFindingRoot : MonoBehaviour
                     pathList[i].OnViewChange(ViewState.PathResult);
                     idStr += pathList[i].XIndex + "," + pathList[i].YIndex + " -> ";
                 }
-                Debug.Log($"Length: {m_endBlock.sumDistance}, Calculation Time: {Time.realtimeSinceStartup - startTime}");
+                Debug.Log($"{pathFinderMode}\nLength: {m_endBlock.sumDistance}, Calculation Time: {Time.realtimeSinceStartup - startTime}");
                 m_endBlock.OnViewChange(ViewState.EndingPoint); // 重置终点状态为红色
                 operation = OperationEnum.ShowResult;
                 break;

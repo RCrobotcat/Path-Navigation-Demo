@@ -39,6 +39,15 @@ namespace NaviPath
             OnViewChange.Invoke(ViewState.Walk);
         }
 
+        public void UnInitBlockLogic()
+        {
+            m_walkable = true;
+            sumDistance = float.PositiveInfinity;
+            preBlock = null;
+
+            m_view.UnInitBlockView();
+        }
+
         public void SetWalkableState(bool state)
         {
             m_walkable = state;
