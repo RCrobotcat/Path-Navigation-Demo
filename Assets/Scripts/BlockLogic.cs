@@ -82,6 +82,7 @@ namespace NaviPath
             return $"[{XIndex}, {YIndex}]";
         }
 
+        // 优先级队列比较
         public int CompareTo(BlockLogic otherBlock)
         {
             if (priority < otherBlock.priority)

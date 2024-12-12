@@ -14,6 +14,7 @@ public enum PathFinderMode
 {
     BFS,
     Dijkstra,
+    Greedy,
     AStar
 }
 
@@ -112,9 +113,12 @@ public class PathFindingRoot : MonoBehaviour
                     case PathFinderMode.Dijkstra:
                         basePathFinder = new DijkstraFinder();
                         break;
+                    case PathFinderMode.Greedy:
+                        basePathFinder = new GreedyPathFinder();
+                        break;
                     case PathFinderMode.AStar:
                         // basePathFinder = new AStarFinder();
-                        basePathFinder = new BFSFinder();
+                        basePathFinder = new GreedyPathFinder();
                         break;
                     default:
                         break;
