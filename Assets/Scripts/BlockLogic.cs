@@ -82,7 +82,7 @@ namespace NaviPath
             return $"[{XIndex}, {YIndex}]";
         }
 
-        // 优先级队列比较
+        // 优先级队列比较: 优先级越高, 越先出队列(小顶堆)
         public int CompareTo(BlockLogic otherBlock)
         {
             if (priority < otherBlock.priority)

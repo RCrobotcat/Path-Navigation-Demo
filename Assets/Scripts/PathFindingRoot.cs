@@ -117,8 +117,7 @@ public class PathFindingRoot : MonoBehaviour
                         basePathFinder = new GreedyPathFinder();
                         break;
                     case PathFinderMode.AStar:
-                        // basePathFinder = new AStarFinder();
-                        basePathFinder = new GreedyPathFinder();
+                        basePathFinder = new AStarPathFinder();
                         break;
                     default:
                         break;
