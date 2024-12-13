@@ -261,6 +261,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76b7b3478a20df949996fdac51e078ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DrawGizmosColor: {r: 0, g: 0.29602194, b: 1, a: 1}
 --- !u!1 &915732632
 GameObject:
   m_ObjectHideFlags: 0

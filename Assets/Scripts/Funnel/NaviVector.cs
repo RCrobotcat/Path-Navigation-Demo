@@ -89,5 +89,11 @@ namespace NaviFunnel
         {
             return $"[{x}, {z}]";
         }
+#if UnityView
+        public Vector3 ConvertToUnityVector()
+        {
+            return new Vector3(x, y, z);
+        }
+#endif
     }
 }
