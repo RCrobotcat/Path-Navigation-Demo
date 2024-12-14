@@ -1,10 +1,10 @@
-﻿// 导航区域
+﻿using System;
 using System.Collections.Generic;
-using UnityEditor;
 
+// 导航区域
 namespace NaviFunnel
 {
-    public class NaviArea
+    public class NaviArea : IComparable<NaviArea>
     {
         public NaviVector[] vertexArr;
         public int[] indexArr;
@@ -70,6 +70,22 @@ namespace NaviFunnel
         public float CalculateNaviAreaDistanceByCenter(NaviArea neighborArea)
         {
             return NaviVector.SqareDistance(center, neighborArea.center);
+        }
+
+        /// <summary>
+        /// 小顶堆
+        /// </summary>
+        public int CompareTo(NaviArea otherArea)
+        {
+            if (priority < otherArea.priority)
+            {
+                return -1;
+            }
+            else if (priority > otherArea.priority)
+            {
+                return 1;
+            }
+            else return 0;
         }
     }
 }
