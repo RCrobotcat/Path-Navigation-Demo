@@ -7,6 +7,7 @@ using System.Collections.Generic;
 public class NavFunnelRoot : MonoBehaviour
 {
     NaviConfig naviConfig;
+    NaviMap naviMap;
 
     void Start()
     {
@@ -14,6 +15,14 @@ public class NavFunnelRoot : MonoBehaviour
         PELog.LogGreen("Init PELog Done.");
 
         CalculateNaviConfig();
+
+        NaviView naviView = GetComponent<NaviView>();
+        if (naviView != null)
+        {
+            NaviMap.ShowAreaIDView += naviView.ShowAreaIDView;
+        }
+
+        naviMap = new NaviMap(naviConfig.indexArrList, naviConfig.vertexArr);
     }
 
     /// <summary>

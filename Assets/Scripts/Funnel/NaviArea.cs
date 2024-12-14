@@ -1,4 +1,6 @@
 ﻿// 导航区域
+using System.Collections.Generic;
+
 namespace NaviFunnel
 {
     public class NaviArea
@@ -10,6 +12,7 @@ namespace NaviFunnel
         public NaviVector min = new NaviVector(float.MaxValue, float.MaxValue, float.MaxValue);
         public NaviVector max = new NaviVector(float.MinValue, float.MinValue, float.MinValue);
         public NaviVector center = NaviVector.Zero;
+        public List<NaviBorder> borderList;
 
         public NaviArea(int areaID, NaviVector[] vertexArr, int[] indexArr)
         {
