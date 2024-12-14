@@ -74,6 +74,14 @@ namespace NaviFunnel
             return a.x != b.x || a.y != b.y || a.z != b.z;
         }
 
+        /// <summary>
+        /// 计算两个向量之间的距离(平方)
+        /// </summary>
+        public static float SqareDistance(NaviVector v1, NaviVector v2)
+        {
+            return (v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y) * (v1.y - v2.y) + (v1.z - v2.z) * (v1.z - v2.z);
+        }
+
         public override bool Equals(object obj)
         {
             return obj is NaviVector vector &&

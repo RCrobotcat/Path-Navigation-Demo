@@ -19,7 +19,9 @@ public class NavFunnelRoot : MonoBehaviour
         NaviView naviView = GetComponent<NaviView>();
         if (naviView != null)
         {
+            naviView.vertexArr = naviConfig.vertexArr;
             NaviMap.ShowAreaIDView += naviView.ShowAreaIDView;
+            NaviMap.ShowPathAreaView += naviView.ShowPathAreaView;
         }
 
         naviMap = new NaviMap(naviConfig.indexArrList, naviConfig.vertexArr);

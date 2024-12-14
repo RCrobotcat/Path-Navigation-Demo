@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEditor;
 
 // 导航逻辑地图
 namespace NaviFunnel
 {
-    public class NaviMap
+    public partial class NaviMap
     {
         readonly List<int[]> indexArrList;
         readonly NaviVector[] vertexArr;
@@ -15,6 +14,7 @@ namespace NaviFunnel
         readonly Dictionary<string, NaviBorder> areaIDDic = new Dictionary<string, NaviBorder>(); // 通过两个区域ID获取边界线: 共享边界线
 
         public static Action<NaviVector, int> ShowAreaIDView;
+        public static Action<List<NaviArea>> ShowPathAreaView;
 
         public NaviMap(List<int[]> indexArrList, NaviVector[] vertexArr)
         {
