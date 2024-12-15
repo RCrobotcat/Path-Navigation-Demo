@@ -15,6 +15,7 @@ namespace NaviFunnel
 
         public static Action<NaviVector, int> ShowAreaIDView;
         public static Action<List<NaviArea>> ShowPathAreaView;
+        public static Action<List<NaviVector>> ShowInflectionPointView; // 显示拐点
 
         public NaviMap(List<int[]> indexArrList, NaviVector[] vertexArr)
         {
@@ -99,6 +100,41 @@ namespace NaviFunnel
             }
         }
 
+        /// <summary>
+        /// 计算导航路径
+        /// </summary>
+        public List<NaviVector> CalculateNaviPath(NaviVector start, NaviVector end)
+        {
+            int startAreaID = GetNaviAreaIDByPos(start);
+            int endAreaID = GetNaviAreaIDByPos(end);
+            if (startAreaID == -1)
+            {
+                this.Error($"No start area found in {start}.");
+                return null;
+            }
+            else
+            {
+                this.Log($"Start areaID: {startAreaID}");
+            }
+
+            if (endAreaID == -1)
+            {
+                this.Error($"No end area found in {end}.");
+                return null;
+            }
+            else
+            {
+                this.Log($"End areaID: {endAreaID}");
+
+                NaviArea startArea = areaArr[startAreaID];
+                NaviArea endArea = areaArr[endAreaID];
+                List<NaviArea> areaPath = CalculatePolyPathByAStar(startArea, endArea);
+                List<NaviVector> inflectionPointList = null;
+                // TODO
+                return inflectionPointList;
+            }
+        }
+
         List<NaviBorder> GetNaviBorderListByAreaID(int areaID)
         {
             List<NaviBorder> borderList = new List<NaviBorder>();
@@ -110,6 +146,17 @@ namespace NaviFunnel
                 }
             }
             return borderList;
+        }
+
+        /// <summary>
+        /// 通过位置获取导航区域ID
+        /// </summary>
+        public int GetNaviAreaIDByPos(NaviVector position)
+        {
+            int areaID = -1;
+
+            // TODO
+            return areaID;
         }
     }
 }

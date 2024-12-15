@@ -6,8 +6,13 @@ using System.Collections.Generic;
 // 多边形漏斗寻路算法基础架构
 public class NavFunnelRoot : MonoBehaviour
 {
+    public bool ClickingAvailable = true; // 是否可以点击设置起点和终点
+
     NaviConfig naviConfig;
     NaviMap naviMap;
+
+    NaviVector startPos = NaviVector.Zero;
+    NaviVector endPos = NaviVector.Zero;
 
     void Start()
     {
@@ -22,9 +27,40 @@ public class NavFunnelRoot : MonoBehaviour
             naviView.vertexArr = naviConfig.vertexArr;
             NaviMap.ShowAreaIDView += naviView.ShowAreaIDView;
             NaviMap.ShowPathAreaView += naviView.ShowPathAreaView;
+            NaviMap.ShowInflectionPointView += naviView.ShowInflectionPointView;
         }
 
         naviMap = new NaviMap(naviConfig.indexArrList, naviConfig.vertexArr);
+    }
+
+    void Update()
+    {
+        // 鼠标左键设置起点
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, 1000))
+            {
+                Transform start = GameObject.FindGameObjectWithTag("Start").transform;
+                if (ClickingAvailable) start.position = hit.point;
+                startPos = new NaviVector(start.position);
+            }
+        }
+
+        // 鼠标右键设置终点
+        if (Input.GetMouseButtonDown(1))
+        {
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, 1000))
+            {
+                Transform end = GameObject.FindGameObjectWithTag("End").transform;
+                if (ClickingAvailable) end.position = hit.point;
+                endPos = new NaviVector(end.position);
+
+                if (startPos != endPos)
+                {
+                    naviMap.CalculateNaviPath(startPos, endPos);
+                }
+            }
+        }
     }
 
     /// <summary>

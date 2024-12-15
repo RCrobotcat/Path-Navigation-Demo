@@ -52,6 +52,31 @@ public class NaviView : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 显示最终路径拐点
+    /// </summary>
+    public void ShowInflectionPointView(List<NaviVector> inflectionPointsList)
+    {
+        if (inflectionPointsList?.Count > 0)
+        {
+            NaviVector v1, v2;
+            v1 = inflectionPointsList[0];
+            for (int i = 0; i < inflectionPointsList.Count; i++)
+            {
+                v2 = inflectionPointsList[i];
+                ShowDebugLine(v1, v2, Color.red, 10);
+                v1 = v2;
+            }
+
+            string info = "";
+            for (int i = 0; i < inflectionPointsList.Count; i++)
+            {
+                info += $" {inflectionPointsList[i]}";
+            }
+            this.LogGreen($"Inflection Points:{info}");
+        }
+    }
+
     void ShowDebugLine(NaviVector v1, NaviVector v2, Color color, float showTime = float.MaxValue)
     {
         Debug.DrawLine(v1.ConvertToUnityVector(), v2.ConvertToUnityVector(), color, showTime);
