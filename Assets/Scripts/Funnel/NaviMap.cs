@@ -158,5 +158,23 @@ namespace NaviFunnel
             // TODO
             return areaID;
         }
+
+        /// <summary>
+        /// 判断一个点是否在XZ平面上的某个线段上
+        /// </summary>
+        /// <param name="p1">线段的顶点1</param>
+        /// <param name="p2">线段的顶点2</param>
+        /// <param name="point">要判断的点</param>
+        /// <returns></returns>
+        bool PointOnXZSegment(NaviVector p1, NaviVector p2, NaviVector point)
+        {
+            NaviVector v1 = p1 - point;
+            NaviVector v2 = p2 - point;
+
+            bool isCollinear = NaviVector.CrossProductXZ(v1, v2) == 0; // 两向量是否在XZ平面上共线
+            bool isNoProjectionLength = NaviVector.DotXZ(v1, v2) <= 0; // 两向量是否方向相反或在端点上(相反才有可能在线段上)
+
+            return isCollinear && isNoProjectionLength;
+        }
     }
 }

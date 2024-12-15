@@ -82,6 +82,29 @@ namespace NaviFunnel
             return (v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y) * (v1.y - v2.y) + (v1.z - v2.z) * (v1.z - v2.z);
         }
 
+        /// <summary>
+        ///  二维向量的点乘(X和Z)
+        ///  反映的是两个向量的方向是否一致
+        ///  v1向量在v2向量的方向上的投影长度与v2向量的模的乘积
+        /// </summary>
+        public static float DotXZ(NaviVector v1, NaviVector v2)
+        {
+            return v1.x * v2.x + v1.z * v2.z;
+        }
+
+        /// <summary>
+        /// 二维向量的叉乘(X和Z)
+        /// 值为负数: v2在v1顺时针方向
+        /// 值为正数: v2在v1逆时针方向
+        /// 值为0: v2和v1共线
+        /// 值的绝对值为两向量共起点构成的平行四边形的面积
+        /// (x1,y1) x (x2,y2) = x1*y2 - x2*y1 => (x1,0,z1) x (x2,0,z2) = x1*z2 - x2*z1
+        /// </summary>
+        public static float CrossProductXZ(NaviVector v1, NaviVector v2)
+        {
+            return v1.x * v2.z - v1.z * v2.x;
+        }
+
         public override bool Equals(object obj)
         {
             return obj is NaviVector vector &&
