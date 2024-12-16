@@ -129,8 +129,10 @@ namespace NaviFunnel
                 NaviArea startArea = areaArr[startAreaID];
                 NaviArea endArea = areaArr[endAreaID];
                 List<NaviArea> areaPath = CalculatePolyPathByAStar(startArea, endArea);
-                List<NaviVector> inflectionPointList = null;
+
                 // TODO
+                List<NaviVector> inflectionPointList = null;
+                ResetAStarData();
                 return inflectionPointList;
             }
         }

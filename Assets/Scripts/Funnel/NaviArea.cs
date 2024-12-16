@@ -87,5 +87,13 @@ namespace NaviFunnel
             }
             else return 0;
         }
+
+        public void ResetAreaInfo()
+        {
+            start = NaviVector.Zero;
+            priority = 0;
+            sumDistance = float.PositiveInfinity;
+            preArea = null;
+        }
     }
 }

@@ -91,5 +91,19 @@ namespace NaviFunnel
             }
             return pathList;
         }
+
+        void ResetAStarData()
+        {
+            for (int i = 0; i < m_finishedList.Count; i++)
+            {
+                m_finishedList[i].ResetAreaInfo();
+            }
+
+            List<NaviArea> list = m_detectQueue.ToList();
+            for (int j = 0; j < list.Count; j++)
+            {
+                list[j].ResetAreaInfo();
+            }
+        }
     }
 }
