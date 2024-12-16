@@ -154,9 +154,53 @@ namespace NaviFunnel
         public int GetNaviAreaIDByPos(NaviVector position)
         {
             int areaID = -1;
-
-            // TODO
+            for (int i = 0; i < areaArr.Length; i++)
+            {
+                int checkAreaID = areaArr[i].areaID;
+                if (PointInNavigationArea(position, checkAreaID))
+                {
+                    areaID = checkAreaID;
+                    break;
+                }
+            }
             return areaID;
+        }
+
+        /// <summary>
+        /// 判断一个点是否在某个导航区域内部(多边形内部, 不包括边界)
+        /// 基于PNPoly算法
+        /// </summary>
+        bool PointInNavigationArea(NaviVector point, int areaID)
+        {
+            if (areaID > areaArr.Length)
+                return false; // 超出索引范围
+            NaviArea area = areaArr[areaID];
+
+            if (point.x < area.min.x || point.x > area.max.x || point.z < area.min.z || point.z > area.max.z)
+                return false; // 超出包围盒范围
+
+            bool result = false;
+            int i, j, count = area.indexArr.Length;
+            NaviVector p0, p1;
+            for (i = 0, j = count - 1; i < count; j = i++)
+            {
+                p0 = vertexArr[area.indexArr[j]];
+                p1 = vertexArr[area.indexArr[i]];
+                if (PointOnXZSegment(p0, p1, point))
+                {
+                    return true; // 在边界上, 说明也在导航的区域上
+                }
+
+                // PNPoly算法
+                // (p1.x - p0.x) * (point.z - p0.z) / (p1.z - p0.z) + p0.x) 为点point的水平射线与线段p0p1的交点的x坐标
+                if ((p0.z < point.z) != (p1.z < point.z) && (point.x < (p1.x - p0.x) * (point.z - p0.z) / (p1.z - p0.z) + p0.x))
+                {
+                    result = !result;
+                    // 如果点在多边形内部, 则result会被取反两次, 最终为true
+                    // 说明如果点point的水平射线与多边形的交点为奇数个, 则点在多边形内部；如果交点为偶数个, 则点在多边形外部
+                }
+            }
+            return result;
         }
 
         /// <summary>
