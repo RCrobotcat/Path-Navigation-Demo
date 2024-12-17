@@ -130,9 +130,15 @@ namespace NaviFunnel
                 NaviArea endArea = areaArr[endAreaID];
                 List<NaviArea> areaPath = CalculatePolyPathByAStar(startArea, endArea);
 
-                // TODO
-                List<NaviVector> inflectionPointList = null;
+                // 通过多边形漏斗算法计算拐点(路径点)路径
+                List<NaviVector> inflectionPointList = CalculateFunnelConnerPath(areaPath, start, end);
+
                 ResetAStarData();
+                ResetFunnelData();
+
+                // 显示拐点(路径点)路径
+                ShowInflectionPointView?.Invoke(inflectionPointList);
+
                 return inflectionPointList;
             }
         }
@@ -169,7 +175,7 @@ namespace NaviFunnel
         }
 
         /// <summary>
-        /// 判断一个点是否在某个导航区域内部(多边形内部, 不包括边界)
+        /// 判断一个点是否在某个导航区域内部(多边形内部, 包括边界)
         /// 基于PNPoly算法
         /// </summary>
         bool PointInNavigationArea(NaviVector point, int areaID)
@@ -221,6 +227,15 @@ namespace NaviFunnel
             bool isNoProjectionLength = NaviVector.DotXZ(v1, v2) <= 0; // 两向量是否方向相反或在端点上(相反才有可能在线段上)
 
             return isCollinear && isNoProjectionLength;
+        }
+
+        NaviBorder GetNaviBorderByAreaIDKey(string key)
+        {
+            if (areaIDDic.TryGetValue(key, out NaviBorder border))
+            {
+                return border;
+            }
+            else return null;
         }
     }
 }

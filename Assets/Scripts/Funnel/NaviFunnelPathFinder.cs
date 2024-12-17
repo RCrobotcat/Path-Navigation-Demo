@@ -6,6 +6,7 @@ namespace NaviFunnel
 {
     public partial class NaviMap
     {
+        #region A* Navigation
         NaviArea m_startArea;
         NaviArea m_endArea;
 
@@ -89,6 +90,25 @@ namespace NaviFunnel
                 pathList.Insert(0, current); // 插入到第一个位置
                 current = current.preArea;
             }
+
+            int startID, endID; // 起始区域ID和结束区域ID
+            for (int i = 0; i < pathList.Count - 1; i++)
+            {
+                startID = pathList[i].areaID;
+                endID = pathList[i + 1].areaID;
+                string key;
+                if (startID < endID)
+                {
+                    key = $"{startID}_{endID}";
+                }
+                else
+                {
+                    key = $"{endID}_{startID}";
+                }
+
+                pathList[i].targetBorder = GetNaviBorderByAreaIDKey(key);
+            }
+
             return pathList;
         }
 
@@ -105,5 +125,28 @@ namespace NaviFunnel
                 list[j].ResetAreaInfo();
             }
         }
+        #endregion
+
+        #region Funnel Navigation
+        List<NaviVector> positionList = null; // 最终的路径点列表
+        NaviVector funnelPos = NaviVector.Zero; // 漏斗顶点
+
+        /// <summary>
+        /// 计算漏斗路径(路径点列表)
+        /// 基于多边形漏斗算法
+        /// </summary>
+        List<NaviVector> CalculateFunnelConnerPath(List<NaviArea> pathAreaList, NaviVector startPos, NaviVector endPos)
+        {
+            positionList = new List<NaviVector> { startPos }; // 第一个点是起始点
+            // TODO
+
+            return positionList;
+        }
+
+        void ResetFunnelData()
+        {
+            // TODO
+        }
+        #endregion
     }
 }

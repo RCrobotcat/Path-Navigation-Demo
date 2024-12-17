@@ -15,6 +15,8 @@ namespace NaviFunnel
         public NaviVector center = NaviVector.Zero;
         public List<NaviBorder> borderList;
 
+        public NaviBorder targetBorder; // 目标边界线
+
         public NaviVector start = NaviVector.Zero;
         public float priority; // 当前区域的寻路优先级
         public float sumDistance = float.PositiveInfinity; // 走到当前区域时的累计距离, 默认为无穷大
@@ -94,6 +96,7 @@ namespace NaviFunnel
             priority = 0;
             sumDistance = float.PositiveInfinity;
             preArea = null;
+            targetBorder = null;
         }
     }
 }
