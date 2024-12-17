@@ -77,7 +77,7 @@ public class NaviView : MonoBehaviour
         }
     }
 
-    void ShowDebugLine(NaviVector v1, NaviVector v2, Color color, float showTime = float.MaxValue)
+    public static void ShowDebugLine(NaviVector v1, NaviVector v2, Color color, float showTime = float.MaxValue)
     {
         Debug.DrawLine(v1.ConvertToUnityVector(), v2.ConvertToUnityVector(), color, showTime);
     }

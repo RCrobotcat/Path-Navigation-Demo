@@ -1,5 +1,8 @@
 ﻿using NaviPath;
 using System.Collections.Generic;
+#if UnityView
+using UnityEngine;
+#endif
 
 // 导航路径查找器
 namespace NaviFunnel
@@ -138,9 +141,68 @@ namespace NaviFunnel
         List<NaviVector> CalculateFunnelConnerPath(List<NaviArea> pathAreaList, NaviVector startPos, NaviVector endPos)
         {
             positionList = new List<NaviVector> { startPos }; // 第一个点是起始点
-            // TODO
+            funnelPos = startPos;
+
+            // 初始化Funnel
+            int initIndex = CalculateInitAreaID(pathAreaList);
 
             return positionList;
+        }
+
+        int CalculateInitAreaID(List<NaviArea> pathAreaList)
+        {
+            int initAreaID = -1;
+            if (pathAreaList.Count == 0)
+                return initAreaID;
+
+            for (int i = 0; i < pathAreaList.Count; i++)
+            {
+                if (isFunnelInitAreaGood(pathAreaList[i]) && initAreaID == -1)
+                {
+                    initAreaID = i;
+                }
+            }
+
+            return initAreaID;
+        }
+
+        /// <summary>
+        /// 判断漏斗初始化区域是否合适
+        /// </summary>
+        bool isFunnelInitAreaGood(NaviArea initArea)
+        {
+            if (initArea.targetBorder == null)
+                return false;
+
+            int index_1 = initArea.targetBorder.vertexIndex_1;
+            int index_2 = initArea.targetBorder.vertexIndex_2;
+            NaviVector v1 = vertexArr[index_1] - funnelPos;
+            NaviVector v2 = vertexArr[index_2] - funnelPos;
+
+            // 显示漏斗射线
+#if UnityView
+            NaviView.ShowDebugLine(funnelPos, vertexArr[index_1], Color.green, 5);
+            NaviView.ShowDebugLine(funnelPos, vertexArr[index_2], Color.green, 5);
+#endif
+
+            float crossXZ = NaviVector.CrossProductXZ(v1, v2);
+            if (crossXZ < 0)
+            {
+                // TODO
+                return true;
+            }
+            else if (crossXZ > 0)
+            {
+                // TODO
+                return true;
+            }
+            else
+            {
+                this.Warn($"Funnel Init Area is not good! " +
+                    $"Because the funnel vectors {v1} and {v2} " +
+                    $"(funnel pos: {funnelPos}, for area: {initArea.areaID}) are collinear!");
+                return false;
+            }
         }
 
         void ResetFunnelData()
