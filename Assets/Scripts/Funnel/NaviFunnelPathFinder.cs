@@ -131,6 +131,64 @@ namespace NaviFunnel
         #endregion
 
         #region Funnel Navigation
+        /// <summary>
+        /// 漏斗边移动类型枚举
+        /// </summary>
+        enum FunnelShirkEnum
+        {
+            None,
+            LeftToLeft,
+            LeftToCenter,
+            LeftToRight,
+            RightToRight,
+            RightToCenter,
+            RightToLeft
+        }
+
+        /// <summary>
+        /// 当前漏斗所在的左索引号
+        /// </summary>
+        int curLeftIndex = -1;
+        /// <summary>
+        /// 当前漏斗所在的右索引号
+        /// </summary>
+        int curRightIndex = -1;
+
+        /// <summary>
+        /// 漏斗左极限所在索引
+        /// </summary>
+        int leftLimitIndex = -1;
+        /// <summary>
+        /// 漏斗右极限所在索引
+        /// </summary>
+        int rightLimitIndex = -1;
+
+        /// <summary>
+        /// 漏斗左极限向量
+        /// </summary>
+        NaviVector leftLimitDir = NaviVector.Zero;
+        /// <summary>
+        /// 漏斗右极限向量
+        /// </summary>
+        NaviVector rightLimitDir = NaviVector.Zero;
+
+        /// <summary>
+        /// 左即将要检测的位置索引
+        /// </summary>
+        int leftCheckIndex = -1;
+        /// <summary>
+        /// 右即将要检测的位置索引
+        /// </summary>
+        int rightCheckIndex = -1;
+        /// <summary>
+        /// 左即将要检测的向量
+        /// </summary>
+        NaviVector leftCheckDir = NaviVector.Zero;
+        /// <summary>
+        /// 右即将要检测的向量
+        /// </summary>
+        NaviVector rightCheckDir = NaviVector.Zero;
+
         List<NaviVector> positionList = null; // 最终的路径点列表
         NaviVector funnelPos = NaviVector.Zero; // 漏斗顶点
 
@@ -144,9 +202,87 @@ namespace NaviFunnel
             funnelPos = startPos;
 
             // 初始化Funnel
-            int initIndex = CalculateInitAreaID(pathAreaList);
+            int initIndex = CalculateInitAreaID(pathAreaList); // 第一个有效漏斗
+            if (initIndex == -1)
+            {
+                positionList.Add(endPos);
+                return positionList;
+            }
+            this.LogCyan($"FirstAreaID: {pathAreaList[initIndex].areaID}");
+
+            FunnelShirkEnum leftFSE, rightFSE;
+            for (int i = initIndex + 1; i < pathAreaList.Count; i++)
+            {
+                NaviArea area = pathAreaList[i];
+                if (i == pathAreaList.Count - 1)
+                {
+                    // TODO
+                }
+                else
+                {
+                    // 计算要进行检测的索引号和漏斗检测向量(检测漏斗)
+                    CalculateCheckingFunnel(area);
+                }
+            }
 
             return positionList;
+        }
+
+        /// <summary>
+        /// 计算要进行检测的索引号和漏斗检测向量(检测漏斗)
+        /// </summary>
+        void CalculateCheckingFunnel(NaviArea area)
+        {
+            int checkIndex_1 = area.targetBorder.vertexIndex_1;
+            int checkIndex_2 = area.targetBorder.vertexIndex_2;
+            NaviVector checkV1 = vertexArr[checkIndex_1] - funnelPos;
+            NaviVector checkV2 = vertexArr[checkIndex_2] - funnelPos;
+
+            // Debug Show Funnel Check Line
+#if UnityView
+            NaviView.ShowDebugLine(funnelPos, vertexArr[checkIndex_1], Color.cyan, 5);
+            NaviView.ShowDebugLine(funnelPos, vertexArr[checkIndex_2], Color.cyan, 5);
+#endif
+
+            int offset = 0;
+            int count = area.indexArr.Length;
+            for (int i = 0; i < count; i++)
+            {
+                if (curLeftIndex == area.indexArr[i])
+                {
+                    offset = i;
+                    break;
+                }
+            }
+            for (int i = 0; i < count; i++)
+            {
+                int curIndex = area.indexArr[(i + offset) % count];
+                if (curIndex == checkIndex_1)
+                {
+                    leftCheckIndex = checkIndex_1;
+                    leftCheckDir = checkV1;
+                    rightCheckIndex = checkIndex_2;
+                    rightCheckDir = checkV2;
+                    break;
+                }
+                else if (curIndex == checkIndex_2)
+                {
+                    leftCheckIndex = checkIndex_2;
+                    leftCheckDir = checkV2;
+                    rightCheckIndex = checkIndex_1;
+                    rightCheckDir = checkV1;
+                    break;
+                }
+                else
+                {
+                    this.Log($"loop index: {i + offset}");
+                }
+            }
+
+            if (leftLimitDir == NaviVector.Zero)
+                leftLimitDir = leftCheckDir;
+            if (rightLimitDir == NaviVector.Zero)
+                rightLimitDir = rightCheckDir;
         }
 
         int CalculateInitAreaID(List<NaviArea> pathAreaList)
@@ -157,9 +293,10 @@ namespace NaviFunnel
 
             for (int i = 0; i < pathAreaList.Count; i++)
             {
-                if (isFunnelInitAreaGood(pathAreaList[i]) && initAreaID == -1)
+                if (isFunnelInitAreaGood(pathAreaList[i]))
                 {
                     initAreaID = i;
+                    break;
                 }
             }
 
@@ -179,21 +316,25 @@ namespace NaviFunnel
             NaviVector v1 = vertexArr[index_1] - funnelPos;
             NaviVector v2 = vertexArr[index_2] - funnelPos;
 
-            // 显示漏斗射线
-#if UnityView
-            NaviView.ShowDebugLine(funnelPos, vertexArr[index_1], Color.green, 5);
-            NaviView.ShowDebugLine(funnelPos, vertexArr[index_2], Color.green, 5);
-#endif
-
             float crossXZ = NaviVector.CrossProductXZ(v1, v2);
             if (crossXZ < 0)
             {
-                // TODO
+                curLeftIndex = index_1;
+                curRightIndex = index_2;
+                leftLimitIndex = index_1;
+                rightLimitIndex = index_2;
+                leftLimitDir = v1;
+                rightLimitDir = v2;
                 return true;
             }
             else if (crossXZ > 0)
             {
-                // TODO
+                curLeftIndex = index_2;
+                curRightIndex = index_1;
+                leftLimitIndex = index_2;
+                rightLimitIndex = index_1;
+                leftLimitDir = v2;
+                rightLimitDir = v1;
                 return true;
             }
             else
