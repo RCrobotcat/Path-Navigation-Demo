@@ -222,6 +222,8 @@ namespace NaviFunnel
                 {
                     // 计算要进行检测的索引号和漏斗检测向量(检测漏斗)
                     CalculateCheckingFunnel(area);
+                    leftFSE = CalculateLeftFunnelChange();
+                    rightFSE = CalculateRightFunnelChange();
                 }
             }
 
@@ -344,6 +346,67 @@ namespace NaviFunnel
                     $"(funnel pos: {funnelPos}, for area: {initArea.areaID}) are collinear!");
                 return false;
             }
+        }
+
+        /// <summary>
+        /// 计算漏斗左边的变化
+        /// </summary>
+        FunnelShirkEnum CalculateLeftFunnelChange()
+        {
+            FunnelShirkEnum leftFSE;
+            float crossXZ_left = NaviVector.CrossProductXZ(leftLimitDir, leftCheckDir);
+            if (crossXZ_left > 0) // leftCheckDir在leftLimitDir的逆时针方向
+            {
+                leftFSE = FunnelShirkEnum.LeftToLeft;
+            }
+            else if (crossXZ_left == 0) // 共线
+            {
+                leftFSE = FunnelShirkEnum.None;
+            }
+            else // leftCheckDir在leftLimitDir的顺时针方向
+            {
+                float crossXZ_right = NaviVector.CrossProductXZ(rightLimitDir, leftCheckDir);
+                if (crossXZ_right > 0) // leftCheckDir在rightLimitDir的逆时针方向
+                {
+                    leftFSE = FunnelShirkEnum.LeftToCenter;
+                }
+                else // leftCheckDir在rightLimitDir的顺时针方向
+                {
+                    leftFSE = FunnelShirkEnum.LeftToRight;
+                }
+            }
+
+            return leftFSE;
+        }
+        /// <summary>
+        /// 计算漏斗右边的变化
+        /// </summary>
+        FunnelShirkEnum CalculateRightFunnelChange()
+        {
+            FunnelShirkEnum rightFSE;
+            float crossXZ_left = NaviVector.CrossProductXZ(rightLimitDir, rightCheckDir);
+            if (crossXZ_left < 0) // rightCheckDir在rightLimitDir的顺时针方向
+            {
+                rightFSE = FunnelShirkEnum.RightToRight;
+            }
+            else if (crossXZ_left == 0) // 共线
+            {
+                rightFSE = FunnelShirkEnum.None;
+            }
+            else // rightCheckDir在rightLimitDir的逆时针方向
+            {
+                float crossXZ_right = NaviVector.CrossProductXZ(leftLimitDir, rightCheckDir);
+                if (crossXZ_right < 0) // rightCheckDir在leftLimitDir的顺时针方向
+                {
+                    rightFSE = FunnelShirkEnum.RightToCenter;
+                }
+                else // rightCheckDir在leftLimitDir的逆时针方向
+                {
+                    rightFSE = FunnelShirkEnum.RightToLeft;
+                }
+            }
+
+            return rightFSE;
         }
 
         void ResetFunnelData()
