@@ -192,6 +192,9 @@ namespace NaviFunnel
         List<NaviVector> positionList = null; // 最终的路径点列表
         NaviVector funnelPos = NaviVector.Zero; // 漏斗顶点
 
+        readonly List<int> leftConnerList = new List<int>(); // 左拐点缓存列表
+        readonly List<int> rightConnerList = new List<int>(); // 右拐点缓存列表
+
         /// <summary>
         /// 计算漏斗路径(路径点列表)
         /// 基于多边形漏斗算法
@@ -200,6 +203,8 @@ namespace NaviFunnel
         {
             positionList = new List<NaviVector> { startPos }; // 第一个点是起始点
             funnelPos = startPos;
+            leftConnerList.Clear();
+            rightConnerList.Clear();
 
             // 初始化Funnel
             int initIndex = CalculateInitAreaID(pathAreaList); // 第一个有效漏斗
@@ -224,6 +229,58 @@ namespace NaviFunnel
                     CalculateCheckingFunnel(area);
                     leftFSE = CalculateLeftFunnelChange();
                     rightFSE = CalculateRightFunnelChange();
+                    if (leftFSE == FunnelShirkEnum.LeftToLeft)
+                    {
+                        if (!leftConnerList.Contains(leftCheckIndex))
+                        {
+                            leftConnerList.Add(leftCheckIndex); // 添加到缓存列表
+                        }
+                    }
+                    if (rightFSE == FunnelShirkEnum.RightToRight)
+                    {
+                        if (!rightConnerList.Contains(rightCheckIndex))
+                        {
+                            rightConnerList.Add(rightCheckIndex); // 添加到缓存列表
+                        }
+                    }
+
+                    #region Left
+                    switch (leftFSE)
+                    {
+                        case FunnelShirkEnum.None:
+                            leftLimitIndex = leftCheckIndex;
+                            break;
+                        case FunnelShirkEnum.LeftToCenter:
+                            leftLimitIndex = leftCheckIndex;
+                            leftLimitDir = leftCheckDir;
+                            leftConnerList.Clear();
+                            break;
+                        case FunnelShirkEnum.LeftToRight:
+                            // TODO 计算极限变更
+                            break;
+                        default:
+                            break;
+                    }
+                    #endregion
+
+                    #region Right
+                    switch (rightFSE)
+                    {
+                        case FunnelShirkEnum.None:
+                            rightLimitIndex = rightCheckIndex;
+                            break;
+                        case FunnelShirkEnum.RightToCenter:
+                            rightLimitIndex = rightCheckIndex;
+                            rightLimitDir = rightCheckDir;
+                            rightConnerList.Clear();
+                            break;
+                        case FunnelShirkEnum.RightToLeft:
+                            // TODO 计算极限变更
+                            break;
+                        default:
+                            break;
+                    }
+                    #endregion
                 }
             }
 

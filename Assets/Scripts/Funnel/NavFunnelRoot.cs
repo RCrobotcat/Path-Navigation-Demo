@@ -69,6 +69,7 @@ public class NavFunnelRoot : MonoBehaviour
     void CalculateNaviConfig()
     {
         GameObject map = GameObject.FindGameObjectWithTag("FunnelMapRoot");
+        if (map == null) return;
         Transform pointRoot = map.transform.Find("pointRoot");
         Transform indexRoot = map.transform.Find("indexRoot");
 
@@ -81,6 +82,7 @@ public class NavFunnelRoot : MonoBehaviour
         for (int i = 0; i < indexRoot.childCount; i++)
         {
             Transform trans = indexRoot.GetChild(i);
+            if (trans.gameObject.activeSelf == false) continue;
             string[] indexArrString = trans.name.Split('-');
             int[] indexArr = new int[indexArrString.Length];
             for (int j = 0; j < indexArrString.Length; j++)
@@ -107,6 +109,9 @@ public class NavFunnelRoot : MonoBehaviour
         }
 
         Gizmos.color = DrawGizmosColor;
+        if (naviConfig == null)
+            return;
+
         for (int i = 0; i < naviConfig.indexArrList.Count; i++)
         {
             int[] indexArr = naviConfig.indexArrList[i];
