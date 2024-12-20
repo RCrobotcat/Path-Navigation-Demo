@@ -105,6 +105,52 @@ namespace NaviFunnel
             return v1.x * v2.z - v1.z * v2.x;
         }
 
+        /// <summary>
+        /// 三维向量的叉乘(X,Y,Z)
+        /// 得到的向量垂直于v1和v2构成的平面(法向量)
+        /// </summary>
+        public static NaviVector CrossProductXYZ(NaviVector v1, NaviVector v2)
+        {
+            return new NaviVector
+            {
+                x = v1.y * v2.z - v1.z * v2.y,
+                y = v1.z * v2.x - v1.x * v2.z,
+                z = v1.x * v2.y - v1.y * v2.x
+            };
+        }
+
+        /// <summary>
+        /// 归一化向量
+        /// </summary>
+        public static NaviVector NormalizedXZ(NaviVector v)
+        {
+            float length = Mathf.Sqrt(v.x * v.x + v.z * v.z);
+            return new NaviVector
+            {
+                x = v.x / length,
+                y = 0,
+                z = v.z / length
+            };
+        }
+
+        /// <summary>
+        /// 计算两个向量之间的夹角(弧度)
+        /// 传进来的v1和v2要为单位向量
+        /// </summary>
+        public static float GetAngleXZ(NaviVector v1, NaviVector v2)
+        {
+            float dot = DotXZ(v1, v2);
+            float angle = MathF.Acos(dot);
+
+            NaviVector cross = CrossProductXYZ(v1, v2);
+            if (cross.y < 0)
+            {
+                angle = -angle;
+            }
+
+            return angle;
+        }
+
         public override bool Equals(object obj)
         {
             return obj is NaviVector vector &&
