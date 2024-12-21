@@ -1,8 +1,7 @@
 ﻿using NaviPath;
+using System;
 using System.Collections.Generic;
-#if UnityView
 using UnityEngine;
-#endif
 
 // 导航路径查找器
 namespace NaviFunnel
@@ -276,8 +275,8 @@ namespace NaviFunnel
                             rightConnerList.Clear();
                             break;
                         case FunnelShirkEnum.RightToLeft:
-                            // TODO 计算极限变更
-
+                            // 计算极限变更
+                            CalculateRightToLeftLimitIndex();
                             break;
                         default:
                             break;
@@ -300,10 +299,10 @@ namespace NaviFunnel
             NaviVector checkV2 = vertexArr[checkIndex_2] - funnelPos;
 
             // Debug Show Funnel Check Line
-#if UnityView
-            NaviView.ShowDebugLine(funnelPos, vertexArr[checkIndex_1], Color.cyan, 5);
-            NaviView.ShowDebugLine(funnelPos, vertexArr[checkIndex_2], Color.cyan, 5);
-#endif
+            /*#if UnityView
+                        NaviView.ShowDebugLine(funnelPos, vertexArr[checkIndex_1], Color.cyan, 5);
+                        NaviView.ShowDebugLine(funnelPos, vertexArr[checkIndex_2], Color.cyan, 5);
+            #endif*/
 
             int offset = 0;
             int count = area.indexArr.Length;
@@ -476,6 +475,7 @@ namespace NaviFunnel
             funnelPos = vertexArr[rightLimitIndex]; // 漏斗位置更新
             positionList.Add(funnelPos);
 
+            bool updateLimit = false; // 防止特殊情况
             int connerIndex = 0;
             NaviVector rightLimitDirNormalized = NaviVector.NormalizedXZ(rightLimitDir);
             while (connerIndex < rightConnerList.Count)
@@ -484,13 +484,15 @@ namespace NaviFunnel
                 for (int i = connerIndex; i < rightConnerList.Count; i++)
                 {
                     NaviVector v = NaviVector.NormalizedXZ(vertexArr[rightConnerList[i]] - funnelPos);
-                    float currentRad = Mathf.Abs(NaviVector.GetAngleXZ(rightLimitDirNormalized, v));
+                    float currentRad = MathF.Abs(NaviVector.GetAngleXZ(rightLimitDirNormalized, v));
                     if (currentRad <= rad)
                     {
                         connerIndex = i;
                         rad = currentRad;
                     }
                 }
+
+                updateLimit = true; // 防止特殊情况
 
                 // 漏斗位置更新, 极限向量更新
                 rightLimitIndex = rightConnerList[connerIndex];
@@ -520,6 +522,82 @@ namespace NaviFunnel
                     }
                     break;
                 }
+            }
+
+            if (!updateLimit)
+            {
+                // 重置右极限和左极限
+                rightLimitIndex = -1;
+                rightLimitDir = NaviVector.Zero;
+                leftLimitIndex = leftCheckIndex;
+                leftLimitDir = vertexArr[leftLimitIndex] - funnelPos;
+            }
+        }
+
+        /// <summary>
+        /// 右向向左移动
+        /// </summary>
+        void CalculateRightToLeftLimitIndex()
+        {
+            funnelPos = vertexArr[leftLimitIndex]; // 漏斗位置更新
+            positionList.Add(funnelPos);
+
+            bool updateLimit = false; // 防止特殊情况
+            int connerIndex = 0;
+            NaviVector leftLimitDirNormalized = NaviVector.NormalizedXZ(leftLimitDir);
+            while (connerIndex < leftConnerList.Count)
+            {
+                float rad = float.MaxValue;
+                for (int i = connerIndex; i < leftConnerList.Count; i++)
+                {
+                    NaviVector v = NaviVector.NormalizedXZ(vertexArr[leftConnerList[i]] - funnelPos);
+                    float currentRad = MathF.Abs(NaviVector.GetAngleXZ(leftLimitDirNormalized, v));
+                    if (currentRad <= rad)
+                    {
+                        connerIndex = i;
+                        rad = currentRad;
+                    }
+                }
+
+                updateLimit = true; // 防止特殊情况
+
+                // 漏斗位置更新, 极限向量更新
+                leftLimitIndex = leftConnerList[connerIndex];
+                leftLimitDir = vertexArr[leftLimitIndex] - funnelPos;
+                rightLimitIndex = rightCheckIndex;
+                rightLimitDir = vertexArr[rightLimitIndex] - funnelPos;
+
+                float cross = NaviVector.CrossProductXZ(rightLimitDir, leftLimitDir);
+                if (cross > 0) // leftLimitDir在rightLimitDir的逆时针方向(漏斗不合法)
+                {
+                    funnelPos = vertexArr[leftLimitIndex];
+                    positionList.Add(funnelPos);
+                    connerIndex++;
+                    if (connerIndex >= leftConnerList.Count)
+                    {
+                        leftLimitIndex = -1;
+                        leftLimitDir = NaviVector.Zero;
+
+                        rightLimitDir = vertexArr[rightLimitIndex] - funnelPos;
+                    }
+                }
+                else // 漏斗合法
+                {
+                    for (int i = 0; i < connerIndex; i++)
+                    {
+                        leftConnerList.RemoveAt(0);
+                    }
+                    break;
+                }
+            }
+
+            if (!updateLimit)
+            {
+                // 重置左极限和右极限
+                leftLimitIndex = -1;
+                leftLimitDir = NaviVector.Zero;
+                rightLimitIndex = rightCheckIndex;
+                rightLimitDir = vertexArr[rightLimitIndex] - funnelPos;
             }
         }
 
