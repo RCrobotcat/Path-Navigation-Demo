@@ -256,7 +256,8 @@ namespace NaviFunnel
                             leftConnerList.Clear();
                             break;
                         case FunnelShirkEnum.LeftToRight:
-                            // TODO 计算极限变更
+                            // 计算极限变更
+                            CalculateLeftToRightLimitIndex();
                             break;
                         default:
                             break;
@@ -275,7 +276,7 @@ namespace NaviFunnel
                             rightConnerList.Clear();
                             break;
                         case FunnelShirkEnum.RightToLeft:
-                            // 计算极限变更
+                            // TODO 计算极限变更
 
                             break;
                         default:
@@ -503,6 +504,13 @@ namespace NaviFunnel
                     funnelPos = vertexArr[rightLimitIndex];
                     positionList.Add(funnelPos);
                     connerIndex++;
+                    if (connerIndex >= rightConnerList.Count)
+                    {
+                        rightLimitIndex = -1;
+                        rightLimitDir = NaviVector.Zero;
+
+                        leftLimitDir = vertexArr[leftLimitIndex] - funnelPos;
+                    }
                 }
                 else // 漏斗合法
                 {
